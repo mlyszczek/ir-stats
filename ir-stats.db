@@ -1,0 +1,283 @@
+# This is example file that contains all config options that program will
+# support. Lines starting with '#' are comments and are ignored.
+
+# this starts option database part of file, it's hardcoded so don't change
+# it
+
+>>>> option
+
+# options part is simple CSV formated database, first line of this csv
+# contains name of fields that is used by progen, thus it should not be
+# modified in your project. Here is a list of fields:
+#
+# * type
+#       simple C type, (int, unsigned, char etc.) of the config. Special
+#       type "string" exists which can be used instead of "const char *"
+#
+# * map-list (optional)
+#       This is list that maps integers to strings. This can be used when
+#       you want to allow user to specify value with string but in code
+#       you want to keep it as integer (for speed or because it makes sense).
+#       Good example here is log level. Internal embedlog uses integers for
+#       log levels, but it makes sense for user to be able to pass string
+#       like "notice or error" instead of 3 or 5, which is easier to remember.
+#       In our example, when user passes --log-level=crit, "crit" string will
+#       be converted to 2 (because crit is 3rd on the list), and "fatal" will
+#       be 0. Values are indexed from 0. If uses passes something that is not
+#       on the list - error will be returned to him. This is optional, if
+#       skipped, user will have to provide ordinary integer values. If this
+#       is specified, only strings will work, so --log-level=0 will not work.
+#       Elements are delimited with ":" character.
+#
+# * section (optional)
+#       Name of the section, this will be part of full config name, and as
+#       [section] in generated INI file. This can be empty, in that case
+#       only name field will be used as variable, macro and config name.
+#
+# * name
+#       Name of the config, with "section" forms full config name. If
+#       section is not specified, only name will be used (example after
+#       or, obviously)
+#
+#       For options passed with arguments, full option will be in form
+#           --section-name or --name
+#
+#       In C code, option will be in form:
+#           section_name or name
+#       and all '-' characters will be converted to '_'.
+#
+#       In INI file, option will be in form
+#           [section]
+#           name = value
+#
+#       or if section is not passed, fields will be on top of config file
+#       without [section]:
+#           name = value
+#
+# * shortopt (optional)
+#       When specified, user will be able to specify option using shortopt.
+#       If you do not specify it, and you compile program with
+#       -DPROJECT_ENABLE_GETOPT (and not -DPROJECT_ENABLE_GETOPT_LONG)
+#       so that only short options are used, user will not be able to
+#       set these options via command line.
+#
+# * default
+#       Default value if it is not specified by user. Must match given type
+#       for option. When map-list is set, should be one of the entries in
+#       the map list.
+#
+# * min and max
+#       Minimal and maximal value for option. For integers macros like
+#       INT_MAX or SIZE_MAX can be used, if map-list is specified this is
+#       ignored (map list is limiting options itself), for strings, this
+#       defines how long string can be.
+#
+# * guard (optional)
+#       It may be possible that you might want some options to be disabled
+#       when some conditions are not met. For example, you might want your
+#       program to support instalations that does not have support for SSL,
+#       and for those systemd, there is virtually no need to have SSL
+#       related config fields and while this is usually no big deal for
+#       big OSes like Linux, it may pose some problems for hardcore
+#       embedded systems where each byte counts.
+#
+#       So, you can specify here name of the macro expression to evaluate,
+#       so this can be as simple as `HAVE_SSL' or `HAVE_SSL && HAVE_UDP',
+#       which will result in something like
+#
+#           #if HAVE_SSL
+#               do something
+#           #endif
+#
+#           #if HAVE_SSL && HAVE_UDP
+#               do code
+#           #endif
+#
+#       If not specified, option will be always present in code.
+#
+# * required
+#       Defines if argument is required for option or not. Can be one of
+#
+#       * no
+#           option does not take any argument, used as flag like
+#               program --flag -c
+#
+#       * optional (NOT SUPPORTED YET)
+#           option takes argument but is optional, like
+#               program --flag
+#           or
+#               program --flag=4
+#
+#           Both are valid
+#
+#       * required
+#           option takes argument and that argument must be specified or
+#           error will be emited.
+#               program --flag=4
+#           and
+#               program --flag
+#
+#           will return error.
+#
+# * valname
+#       Value name for help message. When --help is printed, it will look
+#       like this:
+#
+#           --section-name=<valname>
+#
+#       So in our example it will look like it:
+#
+#       -l, --log-level=<level>
+#           --log-path=<path>
+#
+#       Where "level" and "path" are valname
+#
+# * description
+#       Short description of option, used in help message in format
+#
+#           --section-name=<valname>        description
+#
+#       So in our example it will look like it:
+#
+#       -l, --log-level=<level>     maximum log level to print
+#           --log-path=<path>       path where to store logs
+#
+# spaces are also removed from first line, so you can pad them for better
+# readability.
+
+type,           map-list,                                    section, name,          shortopt, default,                       min, max,      guard,    required, valname, description
+
+# All lines that follows are your programs config options. You may modify them
+# as you see fit. Initial spaces are trimmed so you can indent fields for better
+# readability.
+string,         ,                                            ,        output-dir,    o,        "/var/lib/ir-stats",           1,   PATH_MAX, ,         required, path,    location where ir-stats keeps its database
+int,            ,                                            ,        daemonize,     D,        0,                             0,   1,        ,         no,       ,        run as daemon
+string,         ,                                            ,        user,          u,        "ir-stats",                    1,   32,       ,         required, user,    name of user that should run daemon (only with -D)                                                                                                                            
+string,         ,                                            ,        group,         g,        "ir-stats",                    1,   32,       ,         required, user,    name of group that should run daemon (only with -D)
+string,         ,                                            ,        pid-file,      P,        "/var/run/ir-stats.pid",       1,   PATH_MAX, ,         required, path,    wher to store daemon pid file (only with -D)
+string,         ,                                            log,     path,          p,        "/var/log/ir-stats.log",       1,   PATH_MAX, ,         required, path,    location where to store program logs
+int,            fatal:alert:crit:error:warn:notice:info:dbg, log,     level,         l,        info,                          0,   0,        ,         required, level,   maximum log level to print
+int,            ,                                            log,     frotate-number,,         0,                             0,   INT_MAX,  ,         required, num,     max number of files to rotate (0 to disable)
+int,            ,                                            log,     colors,        ,         0,                             0,   1,        ,         no,       ,        add ascii colors to logs depending on level printed
+int,            ,                                            log,     fsync-level,   ,         1,                             0,   7,        ,         required, level,   minimum level of log that should always be synced
+size_t,         ,                                            log,     frotate-size,  ,         10485760,                      0,   SIZE_MAX, ,         required, size,    maximum size single log file can get
+size_t,         ,                                            log,     fsync-every,   ,         4096,                          0,   SIZE_MAX, ,         required, size,    log will be synced to drive when this ammount of bytes have been written
+int,            off:short:long,                              log,     ts,            ,         long,                          0,   0,        ,         required, ts,      timestamp format to add to each log message
+int,            clock:time:realtime:monotonic,               log,     ts-tm,         ,         realtime,                      0,   0,        ,         required, tm,      source of the clock to use for timestamping
+int,            off:ms:us:ns,                                log,     ts-tm-fract,   ,         ms,                            0,   0,        ,         required, fract,   level of fraction of seconds detail to print
+int,            ,                                            log,     finfo,         ,         0,                             0,   1,        ,         no,       ,        add filename to every print
+int,            ,                                            log,     funcinfo,      ,         0,                             0,   1,        ,         no,       ,        add function name to every print
+int,            ^stderr:stdout:file,                         log,     output,        ,         stderr,                        0,   0,        ,         required, output,  outputs to enable for printing, can be added for multiple outputs
+string,         ,                                            log,     prefix,        ,         "ir-stats: ",                  1,   32,       ,         required, prefix,  string to prefix each log print with
+
+# when you define objects in map-list they are by default inexed from 0
+# or 1 when they are flags, but often you might need to have specific
+# value from specific string value. These can be specified here.
+
+>>>> map list
+
+# To define map-list, first specify to which option map coresponds to in
+# format
+#
+# >>> section-name
+#
+# or if section is empty
+#
+# >>> name
+#
+# Then it's simple csv in format
+# map-string-value, integer-value
+#
+# integer-value can also be some macro like PATH_MAX that is defined in
+# program.
+#
+# Map elements can be skipped, in which case progen will automatically
+# increment value by 1 or times 2 for flags. Note that incrementing won't
+# work if you use MACRO definition.
+
+>>> log-output
+# here define map to use MACRO definitions, since these values could
+# change if used with different version of library, it would not be
+# wise to hardcode them with integer values.
+stderr,     EL_OUT_STDERR
+stdout,     EL_OUT_STDOUT
+file,       EL_OUT_FILE
+
+>>> log-ts
+off,        EL_TS_OFF
+short,      EL_TS_SHORT
+long,       EL_TS_LONG
+
+>>> log-ts-tm
+clock,      EL_TS_TM_CLOCK
+time,       EL_TS_TM_TIME
+realtime,   EL_TS_TM_REALTIME
+monotonic,  EL_TS_TM_MONOTONIC
+
+>>> log-ts-tm-fract
+off,        EL_TS_FRACT_OFF
+ms,         EL_TS_FRACT_MS
+us,         EL_TS_FRACT_US
+ns,         EL_TS_FRACT_NS
+
+# short description is good for quick reference when program is run with
+# --help argument, but very often you want to add some more help in either
+# header or config file or maybe both. If that is the case, you can write
+# full help here - in `long description' section.
+
+>>>> long description
+
+# to add help for specific option, add `>>> section-name' in a line, and
+# then after new line, you can write whatevery you want to show in help,
+# this section is not parsed in any way, whatevery is between `>>>' sections
+# will be put in help section. For that reason do not use put `>>> ' as
+# first characters in the help message or things will go wild. If section is
+# empty just use `>>> name'.
+#
+# long description will be used in header and config file instead of
+# short description from CSV. If long description is not present, short
+# info will be used in header and config.
+#
+# Optionally you can put one new line after and before >>> name, for
+# better readability
+
+>>> log-level
+
+defines how much verbose program will be about what it does
+
+  fatal  - fatal errors, application cannot continue to run
+  alert  - major failure that needs immediate attention
+  crit   - critical errors
+  error  - error but recoverable
+  warn   - warnings
+  notice - normal message, but of high importance
+  info   - informations log, doesn't print that much, recommended
+  debug  - debug, prints a lot of not really needed things in normal usage
+
+>>> log-colors
+
+if set, logs will contain pretty colors to quickly find
+information debugger might need. Note that not all terminals
+support it! Either 0 or 1 is supported
+
+>>> user
+
+username program should run on, for security reason it should not
+be root.  This will take effect only when -D (--daemonize) options
+is provided
+
+>>> group
+
+group program should run on, for security reason it should not be
+root This will take effect only when -D (--daemonize) options is
+provided
+
+>>> log-program
+
+program runtime logs will be put here
+
+>>> output-dir
+
+directory where ir-stats will hold its database files
+
+>>>> db-end # db-end shall be specified at the very end of file
