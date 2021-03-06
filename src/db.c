@@ -174,10 +174,14 @@ static void dump_to_db
 	el_print(ELD, "laptime %f, prev: %f", fi->lap_time, last_frame.lap_time);
 	if (fi->lap_time > 0 && fi->lap_time != last_frame.lap_time)
 	{
+		char  line[512];
+		/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
 		sprintf(path, "lap-times/%s", fi->track);
 		create_dir(path);
 		sprintf(path, "lap-times/%s/%s", fi->track, fi->car);
-		update_file_double(path, fi->lap_time, "a");
+		sprintf(line, "%lld %f", (long long)time(NULL), fi->lap_time);
+		update_file(path, line, "a");
 		el_print(ELN, "lap time %f, car %s on track: %s",
 				traveled_by_car, fi->car, fi->track);
 	}
