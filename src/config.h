@@ -121,7 +121,7 @@ struct ir_stats_config
 	/* port to listen on */
 	int  server_port;
 
-	/* comma separated list of ips to bind to */
+	/* ip address to bind to */
 	char  server_bind_ip[1024 + 1];
 
 };

@@ -356,31 +356,31 @@ static int ir_stats_config_print_help
 "Usage: %s [-h | -v | options]\n"
 "\n"
 "options:\n"
-"\t-h, --help                         print this help and exit\n"
-"\t-v, --version                      print version information and exit\n"
-"\t-c, --config=<file>                config file to use\n"
-"\t-o, --output-dir=<path>            location where ir-stats keeps its database\n"
-"\t-D, --daemonize=<>                 run as daemon\n"
-"\t-u, --user=<user>                  name of user that should run daemon (only with -D)\n"
-"\t-g, --group=<user>                 name of group that should run daemon (only with -D)\n"
-"\t-P, --pid-file=<path>              where to store daemon pid file (only with -D)\n"
-"\t-i, --driver-id=<id>               driver (customer) id\n"
-"\t-s, --log-path=<port>              port to listen on\n"
-"\t-b, --log-level=<bindlist>         comma separated list of ips to bind to\n"
-"\t-p, --log-frotate-number=<path>    location where to store program logs\n"
-"\t-l, --log-colors=<level>           maximum log level to print\n"
-"\t    --log-fsync-level=<num>        max number of files to rotate (0 to disable)\n"
-"\t    --log-frotate-size=<>          add ascii colors to logs depending on level printed\n"
-"\t    --log-fsync-every=<level>      minimum level of log that should always be synced\n"
-"\t    --log-ts=<size>                maximum size single log file can get\n"
-"\t    --log-ts-tm=<size>             log will be synced to drive when this ammount of bytes have been written\n"
-"\t    --log-ts-tm-fract=<ts>         timestamp format to add to each log message\n"
-"\t    --log-finfo=<tm>               source of the clock to use for timestamping\n"
-"\t    --log-funcinfo=<fract>         level of fraction of seconds detail to print\n"
-"\t    --log-output=<>                add filename to every print\n"
-"\t    --log-prefix=<>                add function name to every print\n"
-"\t    --server-port=<output>         outputs to enable for printing\n"
-"\t    --server-bind-ip=<prefix>      string to prefix each log print with\n"
+"\t-h, --help                        print this help and exit\n"
+"\t-v, --version                     print version information and exit\n"
+"\t-c, --config=<file>               config file to use\n"
+"\t-o, --output-dir=<path>           location where ir-stats keeps its database\n"
+"\t-D, --daemonize                   run as daemon\n"
+"\t-u, --user=<user>                 name of user that should run daemon (only with -D)\n"
+"\t-g, --group=<user>                name of group that should run daemon (only with -D)\n"
+"\t-P, --pid-file=<path>             where to store daemon pid file (only with -D)\n"
+"\t-i, --driver-id=<id>              driver (customer) id\n"
+"\t-p, --log-path=<path>             location where to store program logs\n"
+"\t-l, --log-level=<level>           maximum log level to print\n"
+"\t    --log-frotate-number=<num>    max number of files to rotate (0 to disable)\n"
+"\t    --log-colors                  add ascii colors to logs depending on level printed\n"
+"\t    --log-fsync-level=<level>     minimum level of log that should always be synced\n"
+"\t    --log-frotate-size=<size>     maximum size single log file can get\n"
+"\t    --log-fsync-every=<size>      log will be synced to drive when this ammount of bytes have been written\n"
+"\t    --log-ts=<ts>                 timestamp format to add to each log message\n"
+"\t    --log-ts-tm=<tm>              source of the clock to use for timestamping\n"
+"\t    --log-ts-tm-fract=<fract>     level of fraction of seconds detail to print\n"
+"\t    --log-finfo                   add filename to every print\n"
+"\t    --log-funcinfo                add function name to every print\n"
+"\t    --log-output=<output>         outputs to enable for printing\n"
+"\t    --log-prefix=<prefix>         string to prefix each log print with\n"
+"\t-s, --server-port=<port>          port to listen on\n"
+"\t-b, --server-bind-ip=<ip>         ip address to bind to\n"
 
 , name);
 }
@@ -736,15 +736,15 @@ int ir_stats_config_init
 	strcpy(g_ir_stats_config.log_path, "/var/log/ir-stats.log");
 	PARSE_MAP(log_level, "info");
 	g_ir_stats_config.log_frotate_number = 0;
-	g_ir_stats_config.log_colors = 0;
+	g_ir_stats_config.log_colors = 1;
 	g_ir_stats_config.log_fsync_level = 1;
 	g_ir_stats_config.log_frotate_size = 10485760;
 	g_ir_stats_config.log_fsync_every = 4096;
 	PARSE_MAP(log_ts, "long");
 	PARSE_MAP(log_ts_tm, "realtime");
 	PARSE_MAP(log_ts_tm_fract, "ms");
-	g_ir_stats_config.log_finfo = 0;
-	g_ir_stats_config.log_funcinfo = 0;
+	g_ir_stats_config.log_finfo = 1;
+	g_ir_stats_config.log_funcinfo = 1;
 	PARSE_MAP(log_output, "stderr");
 	strcpy(g_ir_stats_config.log_prefix, "ir-stats: ");
 	g_ir_stats_config.server_port = 7454;

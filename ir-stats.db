@@ -157,7 +157,7 @@ string,         ,                                            ,        group,    
 string,         ,                                            ,        pid-file,      P,        "/var/run/ir-stats.pid",       1,   PATH_MAX, ,         required, path,    where to store daemon pid file (only with -D)
 string,         ,                                            ,        driver-id,     i,        "1337",                        1,   16,       ,         required, id,      driver (customer) id, found in profile
 int,            ,                                            server,  port,          s,        7454,                          0,   65535,    ,         required, port,    port to listen on
-string,         ,                                            server,  bind-ip,       b,        "0.0.0.0",                     7,   1024,     ,         required, bindlist,comma separated list of ips to bind to
+string,         ,                                            server,  bind-ip,       b,        "0.0.0.0",                     7,   1024,     ,         required, ip,      ip address to bind to, 0.0.0.0 to bind to any
 string,         ,                                            log,     path,          p,        "/var/log/ir-stats.log",       1,   PATH_MAX, ,         required, path,    location where to store program logs
 int,            fatal:alert:crit:error:warn:notice:info:dbg, log,     level,         l,        info,                          0,   0,        ,         required, level,   maximum log level to print
 int,            ,                                            log,     frotate-number,,         0,                             0,   INT_MAX,  ,         required, num,     max number of files to rotate (0 to disable)
