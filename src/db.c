@@ -356,6 +356,9 @@ void db_update
 	{
 		el_print(ELN, "lap finished, dumping db to disk");
 		dump_to_db(fi);
+		/* since we are already saving to disk, it won't hurt
+		 * to flush logs to disk as well */
+		el_flush();
 	}
 
 	memcpy(&last_frame, fi, sizeof(*fi));
