@@ -9,7 +9,7 @@
 #define IR_STATS_CONFIG_H 1
 
 #if HAVE_CONFIG_H
-#	include "ir-stats-config.h"
+#	include "ir_stats-config.h"
 #endif
 
 #include <limits.h>

@@ -13,6 +13,8 @@
 
 #include "config.h"
 #include "daemonize.h"
+#include "server.h"
+#include "db.h"
 
 #include <embedlog.h>
 #include <errno.h>
@@ -32,7 +34,7 @@
    ========================================================================== */
 
 
-static volatile int g_ir_stats_run;
+volatile int g_ir_stats_run;
 
 
 /* ==========================================================================
@@ -137,6 +139,7 @@ int main
 		el_option(EL_PREFIX, ir_stats_config->log_prefix);
 		el_option(EL_OUT, ir_stats_config->log_output);
 		el_option(EL_LEVEL, ir_stats_config->log_level);
+		el_option(EL_FUNCINFO, ir_stats_config->log_funcinfo);
 
 		if (ir_stats_config->log_output & EL_OUT_FILE)
 		{
@@ -168,39 +171,33 @@ int main
 	}
 
 	/* dump config, it's good to know what is
-	 * program configuration when debugging later
-	 * */
+	 * program configuration when debugging later */
 	ir_stats_config_dump();
 
-	/* ================================= */
-	/* put your initialization code here */
-	/* ================================= */
-
 	/* all resources initialized, now start main loop */
+
+	if (server_init() != 0)
+		goto server_init_error;
+
+	if (db_init() != 0)
+		goto db_init_error;
 
 	if (ir_stats_config->daemonize)
 		daemonize(ir_stats_config->pid_file, ir_stats_config->user,
 				ir_stats_config->group);
 
 	el_print(ELN, "all resources initialized, starting main loop");
-
-	while (g_ir_stats_run)
-	{
-		/* ======================= */
-		/* put your main code here */
-		/* ======================= */
-	}
-
-	/* ========================== */
-	/* put your cleanup code here */
-	/* ========================== */
+	server_loop_forever();
 
 	ret = 0;
 
-	el_print(ELN, "goodbye %s world!", ret ? "cruel" : "beautiful");
-	el_cleanup();
 	if (ir_stats_config->daemonize)
 		daemonize_cleanup(ir_stats_config->pid_file);
 
+db_init_error:
+server_init_error:
+	el_cleanup();
+
+	el_print(ELN, "goodbye %s world!", ret ? "cruel" : "beautiful");
 	return ret;
 }

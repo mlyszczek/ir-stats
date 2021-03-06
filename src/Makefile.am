@@ -1,4 +1,4 @@
-ir_stats_source = config.c main.c
+ir_stats_source = config.c main.c server.c daemonize.c db.c
 ir_stats_headers = config.h $(top_srcdir)/valid.h
 
 bin_cflags = $(COVERAGE_CFLAGS) -I$(top_srcdir) -I$(top_srcdir)/inc

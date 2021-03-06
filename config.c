@@ -16,7 +16,7 @@
 #include "config.h"
 
 #if HAVE_CONFIG_H
-#	include "ir-stats-config.h"
+#	include "ir_stats-config.h"
 #endif
 
 #if IR_STATS_ENABLE_INI
