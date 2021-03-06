@@ -18,7 +18,6 @@ AC_SUBST(COVERAGE_LDFLAGS)
 
 
 AC_SEARCH_LIBS([el_init], [embedlog])
-AC_SEARCH_LIBS([ini_parse], [inih])
 
 AC_DEFINE([IR_STATS_CONFIG_PATH_DEFAULT], ["/etc/ir-stats.ini"],
 	[default config file for program])

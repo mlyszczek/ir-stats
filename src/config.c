@@ -20,7 +20,7 @@
 #endif
 
 #if IR_STATS_ENABLE_INI
-#	include <ini.h>
+#	include "ini.h"
 #endif
 
 #if IR_STATS_ENABLE_GETOPT
